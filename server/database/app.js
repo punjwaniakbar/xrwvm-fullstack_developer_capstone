@@ -1,4 +1,5 @@
-/* jshint esversion: 6 */
+/* jshint esversion: 8 */
+
 const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
@@ -6,7 +7,7 @@ const cors = require('cors');
 const app = express();
 const port = 3030;
 
-app.use(cors())
+app.use(cors());
 app.use(require('body-parser').urlencoded({ extended: false }));
 
 const reviews_data = JSON.parse(fs.readFileSync("reviews.json", 'utf8'));
@@ -93,11 +94,11 @@ app.get('/fetchDealer/:id', async (req, res) => {
 //Express route to insert review
 app.post('/insert_review', express.raw({ type: '*/*' }), async (req, res) => {
   data = JSON.parse(req.body);
-  const documents = await Reviews.find().sort( { id: -1 } )
-  let new_id = documents[0]['id']+1
+  const documents = await Reviews.find().sort( { id: -1 } );
+  let new_id = documents[0]['id'] + 1;
 
   const review = new Reviews({
-		"id": new_id,cd
+		"id": new_id,
 		"name": data['name'],
 		"dealership": data['dealership'],
 		"review": data['review'],
