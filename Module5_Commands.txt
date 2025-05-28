@@ -1,0 +1,74 @@
+/*******DATABASE-3030********/
+cd /home/project/xrwvm-fullstack_developer_capstone/server/database
+docker build . -t nodeapp
+docker-compose up
+BACKEND URL:
+https://akbarpunjwan-3030.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai
+https://akbarpunjwan-3030.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai
+
+/*******SENTIANALYZER-5000*******/
+cd xrwvm-fullstack_developer_capstone/server/djangoapp/microservices
+docker build . -t us.icr.io/${SN_ICR_NAMESPACE}/senti_analyzer
+docker push us.icr.io/${SN_ICR_NAMESPACE}/senti_analyzer
+ibmcloud ce application create --name sentianalyzer --image us.icr.io/${SN_ICR_NAMESPACE}/senti_analyzer --registry-secret icr-secret --port 5000
+BACKEND URL:
+https://sentianalyzer.1vumuiznu9hp.us-south.codeengine.appdomain.cloud
+https://sentianalyzer.1vzkve6i8sy5.us-south.codeengine.appdomain.cloud
+
+/*******FRONTEND*******/
+cd xrwvm-fullstack_developer_capstone/server/frontend
+npm install
+npm run build
+
+/*******DJANGO*********/
+cd /home/project
+pip install virtualenv
+virtualenv djangoenv
+source djangoenv/bin/activate
+cd /home/project/xrwvm-fullstack_developer_capstone/server
+python3 -m pip install -U -r requirements.txt
+python3 manage.py createsuperuser
+
+cd xrwvm-fullstack_developer_capstone/server
+----Dockerfile
+----EntryPoint.sh
+CodeEngine
+cd xrwvm-fullstack_developer_capstone/server
+MY_NAMESPACE=$(ibmcloud cr namespaces | grep sn-labs-)
+echo $MY_NAMESPACE
+docker build -t us.icr.io/$MY_NAMESPACE/dealership .
+docker push us.icr.io/$MY_NAMESPACE/dealership
+----Deployment.yaml
+sn-labs-akbarpunjwan
+https://akbarpunjwan-8000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/
+----IN-ONE-GO-ALLOFTHEABOVE-----
+cd /home/project
+pip install virtualenv
+virtualenv djangoenv
+source djangoenv/bin/activate
+cd /home/project/xrwvm-fullstack_developer_capstone/server
+python3 -m pip install -U -r requirements.txt
+python3 manage.py makemigrations
+python3 manage.py migrate
+python3 manage.py createsuperuser
+cd xrwvm-fullstack_developer_capstone/server
+MY_NAMESPACE=$(ibmcloud cr namespaces | grep sn-labs-)
+echo $MY_NAMESPACE
+docker build -t us.icr.io/$MY_NAMESPACE/dealership .
+docker push us.icr.io/$MY_NAMESPACE/dealership
+kubectl apply -f deployment.yaml
+--CREATE SUPER USER AFTER POD CREATION--
+kubectl get pods
+kubectl exec dealership-9b77686d6-wh6gw -- ls -lt
+kubectl exec dealership-9b77686d6-wh6gw -- python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('superadmin', 'superadmin@dealerships.com', '2025Sup@r')"
+kubectl exec dealership-9b77686d6-wh6gw -- python3 manage.py makemigrations
+kubectl exec dealership-9b77686d6-wh6gw -- python3 manage.py migrate --run-syncdb
+
+kubectl port-forward deployment.apps/dealership 8000:8000
+
+python3 manage.py makemigrations
+python3 manage.py migrate
+python3 manage.py runserver
+
+
+
